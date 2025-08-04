@@ -42,7 +42,7 @@ const ContactInfoSection: React.FC = () => {
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto py-20">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="flex items-center justify-center mb-6">

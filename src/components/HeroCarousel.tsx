@@ -56,9 +56,9 @@ const HeroCarousel: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full h-[80vh] overflow-hidden">
+    <section className="relative w-full h-[80vh] overflow-hidden ">
       {/* Slides Container */}
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full pt-10">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -122,7 +122,7 @@ const HeroCarousel: React.FC = () => {
       {/* Navigation Arrows */}
       <button
         onClick={goToPrevious}
-        className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm border border-white/20 text-white p-3 rounded-full hover:bg-white/20 hover:scale-110 transition-all duration-300 group"
+        className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm border border-white/20 text-white p-3 rounded-full hover:bg-white/20 hover:scale-110 transition-all duration-300 group hidden md:flex"
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
@@ -130,7 +130,7 @@ const HeroCarousel: React.FC = () => {
 
       <button
         onClick={goToNext}
-        className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm border border-white/20 text-white p-3 rounded-full hover:bg-white/20 hover:scale-110 transition-all duration-300 group"
+        className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-sm border border-white/20 text-white p-3 rounded-full hover:bg-white/20 hover:scale-110 transition-all duration-300 group hidden md:flex"
         aria-label="Next slide"
       >
         <ChevronRight className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />

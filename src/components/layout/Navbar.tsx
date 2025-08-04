@@ -1,6 +1,7 @@
-"use client"
-import React, { useState } from 'react';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+"use client";
+import React, { useState } from "react";
+import { ShoppingCart, Menu, X } from "lucide-react";
+import Image from "next/image";
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -10,40 +11,48 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-black/20 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <nav className="fixed top-0 left-0 z-50 w-full bg-black/20 backdrop-blur-md border-b border-white/10 py-2 md:py-3">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between min-h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <h1 className="text-2xl font-bold text-white">
-              Sumera Traders
-            </h1>
+          <div className="flex-shrink-0 flex items-center">
+            {/* <h1 className="text-2xl font-bold text-white">Sumera Traders</h1> */}
+            <div className="h-16 w-36 sm:h-20 sm:w-48 md:h-24 md:w-60 transition-all duration-300 flex items-center">
+              <Image
+                src="/images/Logo.png"
+                alt="Sumera Traders"
+                width={1000}
+                height={1000}
+                className="object-contain h-full w-full"
+                priority
+              />
+            </div>
           </div>
 
           {/* Center Navigation Links */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+          <div className="hidden md:flex items-center">
+            <div className="ml-6 flex items-center space-x-6 lg:space-x-8">
               <a
                 href="/"
-                className="text-white hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-white/10"
+                className="text-white hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
               >
                 Home
               </a>
               <a
                 href="/products"
-                className="text-white hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-white/10"
+                className="text-white hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
               >
                 Products
               </a>
               <a
                 href="/about"
-                className="text-white hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-white/10"
+                className="text-white hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
               >
                 About
               </a>
               <a
                 href="/contact"
-                className="text-white hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-white/10"
+                className="text-white hover:text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
               >
                 Contact
               </a>
@@ -62,7 +71,7 @@ const Navbar: React.FC = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden">
-            <button 
+            <button
               onClick={toggleMobileMenu}
               className="text-white hover:text-white hover:bg-white/20 p-2 rounded-lg transition-all duration-300"
               aria-label="Toggle mobile menu"
@@ -78,42 +87,48 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Mobile menu */}
-        <div 
-          className={`md:hidden transition-all duration-300 ease-in-out ${
-            isMobileMenuOpen 
-              ? 'max-h-64 opacity-100' 
-              : 'max-h-0 opacity-0 overflow-hidden'
-          }`}
+        <div
+          className={`md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+          aria-hidden={!isMobileMenuOpen}
         >
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-black/30 backdrop-blur-sm rounded-b-lg mt-2 border border-white/10">
-            <a
-              href="/"
-              className="text-white hover:text-white hover:bg-white/20 block px-3 py-2 rounded-lg text-base font-medium transition-all duration-300"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Home
-            </a>
-            <a
-              href="/products"
-              className="text-white hover:text-white hover:bg-white/20 block px-3 py-2 rounded-lg text-base font-medium transition-all duration-300"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Products
-            </a>
-            <a
-              href="/about"
-              className="text-white hover:text-white hover:bg-white/20 block px-3 py-2 rounded-lg text-base font-medium transition-all duration-300"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              About
-            </a>
-            <a
-              href="/contact"
-              className="text-white hover:text-white hover:bg-white/20 block px-3 py-2 rounded-lg text-base font-medium transition-all duration-300"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Contact
-            </a>
+          <div
+            className={`absolute top-0 left-0 w-full bg-black/90 border-b border-white/10 rounded-b-lg shadow-lg transition-all duration-300 ${isMobileMenuOpen ? "translate-y-0" : "-translate-y-full"}`}
+            style={{ transitionProperty: "transform, opacity" }}
+          >
+            <div className="flex flex-col px-4 pt-6 pb-8 space-y-2">
+              <a
+                href="/"
+                className="text-white hover:text-white hover:bg-white/20 block px-3 py-3 rounded-lg text-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                tabIndex={isMobileMenuOpen ? 0 : -1}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </a>
+              <a
+                href="/products"
+                className="text-white hover:text-white hover:bg-white/20 block px-3 py-3 rounded-lg text-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                tabIndex={isMobileMenuOpen ? 0 : -1}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Products
+              </a>
+              <a
+                href="/about"
+                className="text-white hover:text-white hover:bg-white/20 block px-3 py-3 rounded-lg text-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                tabIndex={isMobileMenuOpen ? 0 : -1}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About
+              </a>
+              <a
+                href="/contact"
+                className="text-white hover:text-white hover:bg-white/20 block px-3 py-3 rounded-lg text-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                tabIndex={isMobileMenuOpen ? 0 : -1}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contact
+              </a>
+            </div>
           </div>
         </div>
       </div>

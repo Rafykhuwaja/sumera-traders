@@ -79,7 +79,7 @@ const HeroBanner: React.FC = () => {
   return (
     <section className="relative w-full h-screen overflow-hidden bg-gray-900">
       {/* Background Images Carousel */}
-      <div className="absolute inset-0 blur-sm">
+      <div className="absolute inset-0 blur-sm pt-16">
         {slides.map((slide, index) => (
           <div
             key={slide.id}

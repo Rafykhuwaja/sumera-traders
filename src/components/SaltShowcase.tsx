@@ -2,60 +2,68 @@ import React from "react";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
+import { urlFor } from "@/sanity/lib/image";
+import { client } from "@/sanity/lib/client";
 
-interface SaltProduct {
-  id: number;
-  name: string;
-  image: string;
-  alt: string;
-  slug: string; // Optional slug for future use
+// Function to convert category name to slug
+function createSlug(category: string): string {
+  return category
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .trim();
 }
 
-const SaltShowcase: React.FC = () => {
-  const saltProducts: SaltProduct[] = [
-    {
-      id: 1,
-      name: "Flower Bowl",
-      image: "/images/image.webp",
-      alt: "Himalayan Salt Flower Bowl",
-      slug: "testing",
-    },
-    {
-      id: 2,
-      name: "Pyramid Lamp",
-      image: "/images/image.webp",
-      alt: "Himalayan Salt Pyramid Lamp",
-      slug: "testing",
-    },
-    {
-      id: 3,
-      name: "Crystal Sphere",
-      image: "/images/image.webp",
-      alt: "Himalayan Salt Crystal Sphere",
-      slug: "testing",
-    },
-    {
-      id: 4,
-      name: "Tea Light Holder",
-      image: "/images/image.webp",
-      alt: "Himalayan Salt Tea Light Holder",
-      slug: "testing",
-    },
-    {
-      id: 5,
-      name: "Natural Rock Lamp",
-      image: "/images/image.webp",
-      alt: "Natural Himalayan Salt Rock Lamp",
-      slug: "testing",
-    },
-    {
-      id: 6,
-      name: "Salt Cooking Block",
-      image: "/images/image.webp",
-      alt: "Himalayan Salt Cooking Block",
-      slug: "testing",
-    },
-  ];
+// Interface for category with image
+interface CategoryWithImage {
+  name: string;
+  image?: {
+    asset: {
+      _ref: string;
+      url?: string;
+    };
+    alt?: string;
+  };
+}
+
+// Function to fetch unique categories with their first product's image
+async function fetchCategories(): Promise<CategoryWithImage[]> {
+  // First, get all unique categories
+  const allProducts = await client.fetch(`
+    *[_type == "product" && defined(category)]{
+      category
+    }
+  `);
+  
+  const uniqueCategoryNames = Array.from(new Set(allProducts.map((product: any) => product.category)));
+  
+  // For each category, get the first product's image
+  const categoriesWithImages = await Promise.all(
+    uniqueCategoryNames.map(async (categoryName) => {
+      const firstProduct = await client.fetch(`
+        *[_type == "product" && category == $categoryName][0]{
+          mainImage{
+            asset->{
+              _id,
+              url
+            },
+            alt
+          }
+        }
+      `, { categoryName });
+      
+      return {
+        name: String(categoryName),
+        image: firstProduct?.mainImage || null
+      } as CategoryWithImage;
+    })
+  );
+  
+  return categoriesWithImages.filter(cat => typeof cat.name === "string" && cat.name); // Remove any null category names
+}
+
+async function CategorySection() {
+  const categories = await fetchCategories();
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">
@@ -69,65 +77,89 @@ const SaltShowcase: React.FC = () => {
               <Sparkles className="h-6 w-6 text-white/60" />
             </div>
           </div>
-
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
             Premium Salt Collection
           </h2>
-
           <p className="text-white/80 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
             Handcrafted Himalayan salt products that bring natural beauty and
             wellness to your space
           </p>
         </div>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 lg:gap-8">
-          {saltProducts.map((product) => (
-            <div
-              key={product.id}
-              className="group bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl hover:shadow-white/10 transition-all duration-500 hover:scale-105 hover:bg-black/30"
-            >
-              {/* Image Container */}
-              <div className="relative aspect-square mb-6 overflow-hidden rounded-xl bg-white/5">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-50"></div>
-                <Image
-                  src={product.image}
-                  alt={product.alt}
-                  fill
-                  className="object-contain p-4 group-hover:scale-110 transition-transform duration-500"
-                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                />
+        {/* Categories Grid */}
+        {categories.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {categories.map((category, index) => {
+              const slug = createSlug(category.name);
+              const imageUrl = category.image?.asset?.url 
+                ? urlFor(category.image).url()
+                : "/api/placeholder/300/300";
+              
+              return (
+                <div
+                  key={index}
+                  className="group relative bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-white/20"
+                >
+                  {/* Category Image */}
+                  <div className="aspect-square relative overflow-hidden">
+                    <Image
+                      src={imageUrl}
+                      alt={category.image?.alt || `${category.name} category`}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                  </div>
 
-                {/* Subtle glow effect on hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
-              </div>
+                  {/* Category Info */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 className="text-white font-bold text-xl mb-3 capitalize">
+                      {category.name}
+                    </h3>
+                    
+                    {/* View Products Button */}
+                    <Link
+                      href={`/category/${slug}`}
+                      className="inline-flex items-center justify-center w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-4 rounded-lg backdrop-blur-sm border border-white/30 transition-all duration-200 hover:shadow-lg group-hover:bg-white/40"
+                    >
+                      <span>View Products</span>
+                      <svg
+                        className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </Link>
+                  </div>
 
-              {/* Product Name */}
-              <div className="text-center">
-                <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-white/90 transition-colors duration-300">
-                  {product.name}
-                </h3>
-
-                {/* Decorative underline */}
-                <div className="w-8 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto group-hover:via-white/60 transition-all duration-300"></div>
-              </div>
-
-              {/* Floating particles effect */}
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="flex space-x-1">
-                  <div className="w-1 h-1 bg-white/40 rounded-full animate-ping"></div>
-                  <div className="w-1 h-1 bg-white/30 rounded-full animate-ping delay-100"></div>
-                  <div className="w-1 h-1 bg-white/20 rounded-full animate-ping delay-200"></div>
+                  {/* Decorative Corner Element */}
+                  <div className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full backdrop-blur-sm border border-white/30 flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-white/80" />
+                  </div>
                 </div>
-              </div>
-              <Link href={`/products/${product.slug}`}>
-                <button className="bg-white/20 py-2 px-4 rounded-full">
-                  View More
-                </button>
-              </Link>
+              );
+            })}
+          </div>
+        ) : (
+          // No Categories Found
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-8 h-8 text-white/60" />
             </div>
-          ))}
-        </div>
+            <p className="text-white/80 text-lg">
+              No product categories found.
+            </p>
+          </div>
+        )}
 
         {/* Bottom Decorative Elements */}
         <div className="flex items-center justify-center mt-16 space-x-4">
@@ -140,6 +172,6 @@ const SaltShowcase: React.FC = () => {
       </div>
     </section>
   );
-};
+}
 
-export default SaltShowcase;
+export default CategorySection;
