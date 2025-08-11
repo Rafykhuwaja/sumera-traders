@@ -1,5 +1,6 @@
 import React from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import Link from 'next/link';
 
 const Footer: React.FC = () => {
   return (
@@ -34,40 +35,40 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold text-white">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <a
+                <Link
                   href="/"
                   className="text-white/80 hover:text-white hover:bg-white/10 px-2 py-1 rounded transition-all duration-300 flex items-center group"
                 >
                   <span className="w-1 h-1 bg-white/60 rounded-full mr-3 group-hover:scale-150 transition-transform duration-300"></span>
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/products"
                   className="text-white/80 hover:text-white hover:bg-white/10 px-2 py-1 rounded transition-all duration-300 flex items-center group"
                 >
                   <span className="w-1 h-1 bg-white/60 rounded-full mr-3 group-hover:scale-150 transition-transform duration-300"></span>
                   Products
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/contact"
                   className="text-white/80 hover:text-white hover:bg-white/10 px-2 py-1 rounded transition-all duration-300 flex items-center group"
                 >
                   <span className="w-1 h-1 bg-white/60 rounded-full mr-3 group-hover:scale-150 transition-transform duration-300"></span>
                   Contact
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/privacy"
                   className="text-white/80 hover:text-white hover:bg-white/10 px-2 py-1 rounded transition-all duration-300 flex items-center group"
                 >
                   <span className="w-1 h-1 bg-white/60 rounded-full mr-3 group-hover:scale-150 transition-transform duration-300"></span>
                   Privacy Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -105,13 +106,13 @@ const Footer: React.FC = () => {
               © 2025 CrystalSalt. All rights reserved.
             </p>
             <div className="flex items-center space-x-6 text-white/70 text-sm">
-              <a href="/terms" className="hover:text-white transition-colors duration-300">
+              <Link href="/terms" className="hover:text-white transition-colors duration-300">
                 Terms of Service
-              </a>
+              </Link>
               <span>•</span>
-              <a href="/privacy" className="hover:text-white transition-colors duration-300">
+              <Link href="/privacy" className="hover:text-white transition-colors duration-300">
                 Privacy Policy
-              </a>
+              </Link>
             </div>
           </div>
         </div>

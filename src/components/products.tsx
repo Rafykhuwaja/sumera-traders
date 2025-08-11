@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { client } from "@/sanity/lib/client";
 import Image from "next/image";
+import Link from "next/link";
 
 // Types
 interface Product {
@@ -429,7 +430,8 @@ const ProductCard: React.FC<{
 
   if (viewMode === "list") {
     return (
-      <div className="blur rounded-xl shadow-sm border hover:shadow-lg transition-all duration-300 overflow-hidden group">
+      <Link href={`/product/${product._id}`} className="block">
+        <div className="blur rounded-xl shadow-sm border hover:shadow-lg transition-all duration-300 overflow-hidden group">
         <div className="flex flex-col sm:flex-row">
           {/* Image */}
           <div className="relative sm:w-48 aspect-square sm:aspect-auto overflow-hidden">
@@ -506,26 +508,29 @@ const ProductCard: React.FC<{
                 {product.description}
               </p>
             )}
-
+          
             <div className="flex items-center justify-end">
-              <button className="px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#e87b51] text-white hover:bg-[#d66a42] hover:shadow-lg transform hover:-translate-y-0.5">
-                Add to Cart
-              </button>
+              <span className="px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#e87b51] text-white group-hover:bg-[#d66a42] group-hover:shadow-lg transform group-hover:-translate-y-0.5">
+                View Details
+              </span>
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </Link>
     );
   }
 
   // Grid view
   return (
     <div className="backdrop-blur-sm rounded-xl shadow-sm border hover:shadow-xl transition-all duration-300 overflow-hidden group transform hover:-translate-y-1">
-      {/* Image */}
-      <div className="relative aspect-square overflow-hidden">
-        {product.mainImage?.asset?.url && !imageError ? (
-          <Image
-            src={product.mainImage.asset.url}
+      <Link href={`/product/${product._id}`}>
+
+          {/* Image */}
+          <div className="relative aspect-square overflow-hidden">
+            {product.mainImage?.asset?.url && !imageError ? (
+              <Image
+                src={product.mainImage.asset.url}
             alt={product.name || "Product image"}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
@@ -635,9 +640,10 @@ const ProductCard: React.FC<{
 
         {/* Add to Cart Button */}
         <button className="w-full py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 bg-[#e87b51] text-white hover:bg-[#d66a42] hover:shadow-lg transform hover:-translate-y-0.5">
-          Add to Cart
+          View Details
         </button>
       </div>
+      </Link>
     </div>
   );
 };

@@ -9,8 +9,8 @@ import { client } from "@/sanity/lib/client";
 function createSlug(category: string): string {
   return category
     .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
     .trim();
 }
 
@@ -34,13 +34,16 @@ async function fetchCategories(): Promise<CategoryWithImage[]> {
       category
     }
   `);
-  
-  const uniqueCategoryNames = Array.from(new Set(allProducts.map((product: any) => product.category)));
-  
+
+  const uniqueCategoryNames = Array.from(
+    new Set(allProducts.map((product: any) => product.category))
+  ).sort(); // Sort to ensure consistent order
+
   // For each category, get the first product's image
   const categoriesWithImages = await Promise.all(
     uniqueCategoryNames.map(async (categoryName) => {
-      const firstProduct = await client.fetch(`
+      const firstProduct = await client.fetch(
+        `
         *[_type == "product" && category == $categoryName][0]{
           mainImage{
             asset->{
@@ -50,16 +53,20 @@ async function fetchCategories(): Promise<CategoryWithImage[]> {
             alt
           }
         }
-      `, { categoryName });
-      
+      `,
+        { categoryName }
+      );
+
       return {
         name: String(categoryName),
-        image: firstProduct?.mainImage || null
+        image: firstProduct?.mainImage || null,
       } as CategoryWithImage;
     })
   );
-  
-  return categoriesWithImages.filter(cat => typeof cat.name === "string" && cat.name); // Remove any null category names
+
+  return categoriesWithImages
+    .filter((cat) => typeof cat.name === "string" && cat.name) // Remove any null category names
+    .sort((a, b) => a.name.localeCompare(b.name)); // Sort final result for consistency
 }
 
 async function CategorySection() {
@@ -89,15 +96,15 @@ async function CategorySection() {
         {/* Categories Grid */}
         {categories.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {categories.map((category, index) => {
+            {categories.map((category) => {
               const slug = createSlug(category.name);
-              const imageUrl = category.image?.asset?.url 
+              const imageUrl = category.image?.asset?.url
                 ? urlFor(category.image).url()
                 : "/api/placeholder/300/300";
-              
+
               return (
                 <div
-                  key={index}
+                  key={category.name}
                   className="group relative bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-white/20"
                 >
                   {/* Category Image */}
@@ -118,7 +125,7 @@ async function CategorySection() {
                     <h3 className="text-white font-bold text-xl mb-3 capitalize">
                       {category.name}
                     </h3>
-                    
+
                     {/* View Products Button */}
                     <Link
                       href={`/category/${slug}`}

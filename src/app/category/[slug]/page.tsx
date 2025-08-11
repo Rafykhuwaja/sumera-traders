@@ -1,22 +1,31 @@
-import { client } from '@/sanity/lib/client';
-import { urlFor } from '@/sanity/lib/image';
-import Image from 'next/image';
-import Link from 'next/link';
-import React from 'react';
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
-// Type definition for your product
+// Define PageProps to match Next.js App Router expectations
+interface PageProps {
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
 interface Product {
   _id: string;
   title: string;
   mainImage?: {
     asset: {
-      _ref: string;
+      _ref?: string;
+      _id?: string;
+      url?: string;
     };
     alt?: string;
   };
   galleryImages?: Array<{
     asset: {
-      _ref: string;
+      _ref?: string;
+      _id?: string;
+      url?: string;
     };
     alt?: string;
   }>;
@@ -39,10 +48,9 @@ interface Product {
   ShippingOptionsPrices?: string;
 }
 
-async function Page({ params }: { params: { slug: string } }) {
+export default async function Page({ params }: any) {
   const { slug } = params;
-  
-  // Corrected GROQ query with proper parameter handling
+
   const fetchCategoryData: Product[] = await client.fetch(
     `*[_type == "product" && category == $slug]{
       _id,
@@ -79,15 +87,14 @@ async function Page({ params }: { params: { slug: string } }) {
       shippingServices,
       ShippingOptionsPrices
     }`,
-    { slug } // Pass slug as a parameter
+    { slug }
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-20">
       <h1 className="text-3xl font-bold mb-8 text-gray-800 capitalize">
-        {slug.replace('-', ' ')} Products
+        {slug.replace("-", " ")} Products
       </h1>
-      
       {fetchCategoryData.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-600 text-lg">
@@ -130,34 +137,37 @@ async function Page({ params }: { params: { slug: string } }) {
                   </div>
                 )}
               </div>
-              
               {/* Product Info */}
               <div className="p-4">
                 <h3 className="font-semibold text-lg text-gray-800 mb-2 line-clamp-2">
                   {product.title}
                 </h3>
-                
                 {/* Optional: Show additional info */}
                 <div className="space-y-1 text-sm text-gray-600">
                   {product.materials && (
                     <p>
-                      <span className="font-medium">Material:</span> {product.materials}
+                      <span className="font-medium">Material:</span>{" "}
+                      {product.materials}
                     </p>
                   )}
                   {product.shape && (
                     <p>
-                      <span className="font-medium">Shape:</span> {product.shape}
+                      <span className="font-medium">Shape:</span>{" "}
+                      {product.shape}
                     </p>
                   )}
                   {product.dimensions && (
                     <p>
-                      <span className="font-medium">Dimensions:</span> {product.dimensions}
+                      <span className="font-medium">Dimensions:</span>{" "}
+                      {product.dimensions}
                     </p>
                   )}
                 </div>
-                
                 {/* Action Button */}
-                <Link href={`/category/${slug}/${product._id}`} className="block">
+                <Link
+                  href={`/category/${slug}/${product._id}`}
+                  className="block"
+                >
                   <button className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200">
                     View Details
                   </button>
@@ -170,5 +180,3 @@ async function Page({ params }: { params: { slug: string } }) {
     </div>
   );
 }
-
-export default Page;
