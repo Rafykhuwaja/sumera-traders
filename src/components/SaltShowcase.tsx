@@ -2,8 +2,8 @@ import React from "react";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import { urlFor } from "@/sanity/lib/image";
-import { client } from "@/sanity/lib/client";
+import { urlFor } from "../sanity/lib/image";
+import { client } from "../sanity/lib/client";
 
 // Function to convert category name to slug
 function createSlug(category: string): string {
